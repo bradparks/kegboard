@@ -1,11 +1,10 @@
-#include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <IPAddress.h>
 #include <inttypes.h>
 #include "KegboardPacket.h"
 
-const byte KB_ETHERNET_MAC[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xAB };
+#define KB_ETHERNET_MAC { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xAB }
 
 // 'K' * 'B' == 11526
 #define KB_UDP_PORT 11526

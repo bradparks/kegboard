@@ -1,5 +1,6 @@
-#include "Arduino.h"
+#include <Arduino.h>
 #include "kegboard.h"
+
 #include "KegboardPacketUDP.h"
 
 KegboardPacketUDP::KegboardPacketUDP(IPAddress dest_ip, int dest_port) {
@@ -18,7 +19,8 @@ KegboardPacketUDP::KegboardPacketUDP(IPAddress dest_ip, int dest_port) {
 
 int KegboardPacketUDP::dhcp_connected() {
   if (!_dhcp_status) {
-    _dhcp_status = Ethernet.begin(KB_ETHERNET_MAC);
+    uint8_t mac[] = KB_ETHERNET_MAC;
+    _dhcp_status = Ethernet.begin(mac);
   }
   else {
     _dhcp_status = Ethernet.maintain();
@@ -33,7 +35,9 @@ int KegboardPacketUDP::dhcp_connected() {
 
 void KegboardPacketUDP::Print() {
   int i;
-  uint16_t m_crc = GenCrc();
+
+  // print on serial; has side effect of generating CRC
+  KegboardPacket::Print();
 
   _udp.beginPacket(_remote_ip, _remote_port);
 
@@ -42,6 +46,8 @@ void KegboardPacketUDP::Print() {
   _udp.write((byte*) &i, 2);
 
   _udp.write(m_payload, i);
-  _udp.write((byte*) &crc, 2);
+  _udp.write((byte*) &m_crc, 2);
   _udp.write("\r\n");
+
+  _udp.endPacket();
 }
