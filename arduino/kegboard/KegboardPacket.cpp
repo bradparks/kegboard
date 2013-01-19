@@ -118,6 +118,12 @@ void KegboardPacket::Print()
   int i;
   GenCrc();
 
+  #if KB_ENABLE_ETHERNET
+  KegboardUDP::get()->sendPacket(*this);
+  #endif
+
+  // TODO: optionally disable serial when ethernet is enabled
+
   // header
   // header: prefix
   Serial.print(KBSP_PREFIX);

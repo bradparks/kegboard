@@ -19,6 +19,9 @@ class KegboardPacket {
    bool IsReset();
    void Print();
    void GenCrc();
+
+   friend class KegboardUDP;
+
   protected:
    int m_type;
    uint8_t m_len;

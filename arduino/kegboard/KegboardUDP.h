@@ -9,15 +9,17 @@
 // 'K' * 'B' == 11526
 #define KB_UDP_PORT 11526
 
-class KegboardPacketUDP : public KegboardPacket {
+class KegboardUDP {
   public:
-   KegboardPacketUDP(IPAddress dest_ip = 0, int dest_port = KB_UDP_PORT);
-   void Print();
+   static KegboardUDP* get(IPAddress dest_ip = (uint32_t)0, int dest_port = KB_UDP_PORT);
+   void sendPacket(const KegboardPacket &p);
+
+   bool receivePacket(KegboardPacket& p);
 
   protected:
+   KegboardUDP(IPAddress dest_ip, int dest_port);
    int dhcp_connected();
 
-  private:
    EthernetUDP _udp;
    IPAddress _remote_ip;
    unsigned int _remote_port;

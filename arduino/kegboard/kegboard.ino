@@ -52,6 +52,14 @@
 #include "KegboardPacket.h"
 #include "version.h"
 
+#if KB_ENABLE_ETHERNET
+#include <SPI.h>
+#include <Ethernet.h>
+#include <EthernetUdp.h>
+#include <IPAddress.h>
+#include "KegboardUDP.h"
+#endif
+
 #if (KB_ENABLE_ONEWIRE_THERMO || KB_ENABLE_ONEWIRE_PRESENCE)
 #include "OneWire.h"
 #endif
@@ -845,11 +853,24 @@ void stepRelayWatchdog() {
   }
 }
 
+#if KB_ENABLE_ETHERNET
+void readIncomingUDP() {
+  if (!gPacketStat.have_packet) {
+    gPacketStat.have_packet = KegboardUDP::get()->receivePacket(gInputPacket);
+  }
+}
+#endif //KB_ENABLE_ETHERNET
+
 void loop()
 {
   updateTimekeeping();
 
   readIncomingSerialData();
+
+  #if KB_ENABLE_ETHERNET
+  readIncomingUDP();
+  #endif
+
   handleInputPacket();
 
   writeMeterPackets();

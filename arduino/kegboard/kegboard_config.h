@@ -27,6 +27,9 @@
 // Note: Must set KB_ENABLE_ID12_RFID to 0 if enabling this.
 #define KB_ENABLE_WIEGAND_RFID 0
 
+// Enable ethernet shield support?
+#define KB_ENABLE_ETHERNET 1
+
 //
 // Pin configuration - KEGBOARD VERSION
 //
