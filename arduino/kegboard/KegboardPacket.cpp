@@ -101,24 +101,22 @@ void KegboardPacket::AppendBytes(char *buf, int buflen)
   }
 }
 
-uint16_t KegboardPacket::GenCrc()
+void KegboardPacket::GenCrc()
 {
-  uint16_t crc = KBSP_PREFIX_CRC;
+  m_crc = KBSP_PREFIX_CRC;
 
-  crc = crc_ccitt_update_int(crc, m_type);
-  crc = crc_ccitt_update_int(crc, m_len);
+  m_crc = crc_ccitt_update_int(m_crc, m_type);
+  m_crc = crc_ccitt_update_int(m_crc, m_len);
 
   for (int i=0; i<m_len; i++) {
-    crc = _crc_ccitt_update(crc, m_payload[i]);
+    m_crc = _crc_ccitt_update(m_crc, m_payload[i]);
   }
-
-  return crc;
 }
 
 void KegboardPacket::Print()
 {
   int i;
-  uint16_t crc = KBSP_PREFIX_CRC;
+  GenCrc();
 
   // header
   // header: prefix
@@ -126,20 +124,17 @@ void KegboardPacket::Print()
 
   // header: message_id
   serial_print_int(m_type);
-  crc = crc_ccitt_update_int(crc, m_type);
 
   // header: payload_len
   serial_print_int(m_len);
-  crc = crc_ccitt_update_int(crc, m_len);
 
   // payload
   for (i=0; i<m_len; i++) {
     Serial.write(m_payload[i]);
-    crc = _crc_ccitt_update(crc, m_payload[i]);
   }
 
   // trailer
-  serial_print_int(crc);
+  serial_print_int(m_crc);
   Serial.write('\r');
   Serial.write('\n');
 }

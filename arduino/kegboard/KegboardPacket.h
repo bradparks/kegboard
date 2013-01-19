@@ -1,3 +1,6 @@
+#ifndef kegboardpacket_h
+#define kegboardpacket_h
+
 #include <inttypes.h>
 
 class KegboardPacket {
@@ -15,9 +18,12 @@ class KegboardPacket {
    void Reset();
    bool IsReset();
    void Print();
-   uint16_t GenCrc();
-  private:
+   void GenCrc();
+  protected:
    int m_type;
    uint8_t m_len;
    uint8_t m_payload[KBSP_PAYLOAD_MAXLEN];
+   uint16_t m_crc;
 };
+
+#endif
