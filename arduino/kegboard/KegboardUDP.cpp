@@ -78,6 +78,7 @@ void KegboardUDP::sendPacket(const KegboardPacket &p) {
 bool KegboardUDP::receivePacket(KegboardPacket& p) {
   uint16_t packet_size, crc;
   uint8_t buffer[KBSP_PAYLOAD_MAXLEN];
+  KegboardPacket temp;
 
   packet_size = _udp.parsePacket();
 
@@ -87,17 +88,21 @@ bool KegboardUDP::receivePacket(KegboardPacket& p) {
     if (String((char*)buffer) != KBSP_PREFIX)
        return false;
 
-    _udp.read((byte*) &p.m_type, 2);
+    _udp.read((byte*) &temp.m_type, 2);
     _udp.read((byte*) &packet_size, 2);
     if (packet_size < 0 || packet_size > 112)
       return false;
 
-    _udp.read((byte*) &p.m_payload, packet_size);
+    _udp.read((byte*) &temp.m_payload, packet_size);
 
     _udp.read((byte*) &crc, 2);
-    p.GenCrc();
+    temp.GenCrc();
 
-    if (p.m_crc == crc) {
+    if (temp.m_crc == crc) {
+      p.m_type    = temp.m_type;
+      p.m_len     = temp.m_len;
+      p.m_payload = temp.m_payload;
+      p.m_crc     = temp.m_crc;
       return true;
     }
   }
