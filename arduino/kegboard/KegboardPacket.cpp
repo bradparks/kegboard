@@ -22,6 +22,7 @@
 #include "Arduino.h"
 #include "kegboard.h"
 #include "KegboardPacket.h"
+#include "kegboard_config.h"
 
 #include <avr/io.h>
 #include <HardwareSerial.h>

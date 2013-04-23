@@ -132,7 +132,7 @@ bool KegboardUDP::receivePacket(KegboardPacket& p) {
 
     if (temp.m_crc == crc) {
       p.m_type    = temp.m_type;
-      p.m_len     = temp.m_len;
+      p.m_len     = packet_size;
       memcpy(p.m_payload, temp.m_payload, p.m_len);
       p.m_crc     = temp.m_crc;
       return true;
